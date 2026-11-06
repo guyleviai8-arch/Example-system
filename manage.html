@@ -221,7 +221,7 @@ async function init(){
   apptId=getParam('id');
   if(!apptId){showError(t('errLink'));return}
   const res=await fetch(`${SUPABASE_URL}/functions/v1/clinic-api`,{
-    method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
+    method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`},
     body:JSON.stringify({action:'select',table:'appointments',filters:[{column:'id',value:apptId}]})
   });
   const rj=await res.json();const rows=rj.data||[];
@@ -283,7 +283,7 @@ async function onDateChange(date){
   document.getElementById('slots-area').innerHTML='<div class="loading"><div class="spinner"></div> '+t('loading')+'</div>';
   // בדוק שעות תפוסות
   const res=await fetch(`${SUPABASE_URL}/functions/v1/clinic-api`,{
-    method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
+    method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`},
     body:JSON.stringify({action:'select',table:'appointments',select:'time,id,date'})
   });
   const rj=await res.json();const rows=(rj.data||[]).filter(r=>r.date===date);
@@ -312,7 +312,7 @@ async function confirmReschedule(){
   const btn=document.getElementById('confirm-btn');
   btn.disabled=true;btn.innerHTML='<div class="spinner" style="border-color:rgba(255,255,255,.3);border-top-color:#fff;width:18px;height:18px"></div> '+t('updating');
   const res=await fetch(`${SUPABASE_URL}/functions/v1/clinic-api`,{
-    method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
+    method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`},
     body:JSON.stringify({action:'update',table:'appointments',filters:[{column:'id',value:apptId}],data:{date:newDate,time:newTime,status:'pending'}})
   });
   if(res.ok){
@@ -344,7 +344,7 @@ function showCancel(){
 
 async function confirmCancel(){
   const res=await fetch(`${SUPABASE_URL}/functions/v1/clinic-api`,{
-    method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
+    method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`},
     body:JSON.stringify({action:'delete',table:'appointments',filters:[{column:'id',value:apptId}]})
   });
   if(res.ok){

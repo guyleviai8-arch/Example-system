@@ -657,7 +657,7 @@ let ADMIN_PW='';
 async function apiCall(payload){
   const res=await fetch(API_URL,{
     method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
+    headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`},
     body:JSON.stringify({...payload,username:AUTH_USER,password:ADMIN_PW})
   });
   if(!res.ok)return null;
@@ -784,7 +784,7 @@ async function sendEmail(to,subject,html){
   try{
     await fetch('https://dljeblyhkzlreadokenz.supabase.co/functions/v1/send-email',{
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`},
       body:JSON.stringify({to,subject,html})
     });
   }catch(e){console.log('Email error:',e)}
@@ -845,7 +845,7 @@ async function doLogin(u,p){
   try{
     const res=await fetch(API_URL,{
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`},
       body:JSON.stringify({action:'login',username:u,password:p})
     });
     const j=await res.json();

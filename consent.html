@@ -344,7 +344,7 @@ async function init(){
   if(!FORM_TYPES[formType])formType='general';
   if(!clientId){showError(t('errLink'));return}
   const res=await fetch(`${SUPABASE_URL}/functions/v1/clinic-api`,{
-    method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
+    method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`},
     body:JSON.stringify({action:'select',table:'clients',filters:[{column:'id',value:clientId}]})
   });
   const cj=await res.json();const clients=cj.data||[];
@@ -352,7 +352,7 @@ async function init(){
   clientData=clients[0];
   // בדיקה אם הטופס הספציפי הזה כבר נחתם
   const formsRes=await fetch(`${SUPABASE_URL}/functions/v1/clinic-api`,{
-    method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
+    method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`},
     body:JSON.stringify({action:'select',table:'consent_forms',filters:[{column:'client_id',value:clientId},{column:'form_type',value:formType}]})
   });
   const fj=await formsRes.json();const forms=fj.data||[];
@@ -566,13 +566,13 @@ async function submitConsent(){
 
   // Save to consent_forms table (separate record per form type)
   await fetch(`${SUPABASE_URL}/functions/v1/clinic-api`,{
-    method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
+    method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`},
     body:JSON.stringify({action:'insert',table:'consent_forms',data:{client_id:clientId,form_type:formType,signature_url:sigUrl}})
   });
   // Update client record (mark general consent + save details)
   const notesAdd=`\n[${FORM_TYPES[formType].label} ${t('signedOn')} ${new Date().toLocaleDateString('he-IL')}]`;
   await fetch(`${SUPABASE_URL}/functions/v1/clinic-api`,{
-    method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
+    method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`},
     body:JSON.stringify({action:'update',table:'clients',filters:[{column:'id',value:clientId}],data:{consent:true,notes:(clientData.notes||'')+notesAdd,signature_url:sigUrl,dob:clientData.dob||null,name:clientData.name,lang:LANG}})
   });
 
@@ -581,7 +581,7 @@ async function submitConsent(){
     try{
       await fetch(`${SUPABASE_URL}/functions/v1/send-email`,{
         method:'POST',
-        headers:{'Content-Type':'application/json','Authorization':`Bearer ${SUPABASE_KEY}`},
+        headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`},
         body:JSON.stringify({
           to:clientData.email,
           subject:t('emSubject')+' — '+ft('label')+' — Example System',
